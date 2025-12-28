@@ -11,7 +11,7 @@ if (process.env.STRIPE_SECRET_KEY) {
 }
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 80;
 
 // Data files
 const NOTES_FILE = path.join(__dirname, 'notes.json');
