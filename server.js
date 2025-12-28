@@ -1,6 +1,14 @@
+require('dotenv').config();
 const express = require('express');
+const session = require('express-session');
 const fs = require('fs');
 const path = require('path');
+
+// Initialize Stripe (only if key exists)
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY) {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+}
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -9,10 +17,22 @@ const PORT = process.env.PORT || 3000;
 const NOTES_FILE = path.join(__dirname, 'notes.json');
 const TODOS_FILE = path.join(__dirname, 'todos.json');
 const FILES_FILE = path.join(__dirname, 'files.json');
+const USERS_FILE = path.join(__dirname, 'users.json');
 
 // Middleware
 app.use(express.json());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.urlencoded({ extended: true }));
+
+// Session middleware
+app.use(session({
+    secret: process.env.SESSION_SECRET || 'gilded-desk-secret-key-2025',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false, // Set true in production with HTTPS
+        maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
+    }
+}));
 
 // ============================================
 // HELPER FUNCTIONS
@@ -33,6 +53,311 @@ function readJsonFile(filePath) {
 function writeJsonFile(filePath, data) {
     fs.writeFileSync(filePath, JSON.stringify(data, null, 2));
 }
+
+function findUserByEmail(email) {
+    const users = readJsonFile(USERS_FILE);
+    return users.find(u => u.email === email.toLowerCase());
+}
+
+function findUserByCustomerId(customerId) {
+    const users = readJsonFile(USERS_FILE);
+    return users.find(u => u.stripeCustomerId === customerId);
+}
+
+function updateUser(email, updates) {
+    const users = readJsonFile(USERS_FILE);
+    const index = users.findIndex(u => u.email === email.toLowerCase());
+    if (index !== -1) {
+        users[index] = { ...users[index], ...updates };
+        writeJsonFile(USERS_FILE, users);
+        return users[index];
+    }
+    return null;
+}
+
+function createUser(userData) {
+    const users = readJsonFile(USERS_FILE);
+    const newUser = {
+        email: userData.email.toLowerCase(),
+        name: userData.name,
+        stripeCustomerId: userData.stripeCustomerId || null,
+        subscriptionId: userData.subscriptionId || null,
+        activeSubscription: userData.activeSubscription || false,
+        createdAt: new Date().toISOString()
+    };
+    users.push(newUser);
+    writeJsonFile(USERS_FILE, users);
+    return newUser;
+}
+
+// ============================================
+// AUTH MIDDLEWARE
+// ============================================
+function requireAuth(req, res, next) {
+    // Allow any signed-in user (free or subscribed)
+    if (req.session && req.session.user) {
+        next();
+    } else {
+        res.redirect('/signin.html');
+    }
+}
+
+// ============================================
+// STATIC FILES & ROUTES
+// ============================================
+
+// Serve static files (but protect app.html)
+app.use(express.static(path.join(__dirname, 'public'), {
+    index: 'index.html'
+}));
+
+// Landing page
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+// Protected app route
+app.get('/app', requireAuth, (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'app.html'));
+});
+
+// Success page
+app.get('/success', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'success.html'));
+});
+
+// ============================================
+// AUTH API
+// ============================================
+app.post('/api/login', (req, res) => {
+    const { email } = req.body;
+
+    if (!email || !email.trim()) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    let user = findUserByEmail(email);
+
+    if (!user) {
+        user = createUser({ email, name: email.split('@')[0] });
+    }
+
+    req.session.user = user;
+    res.json({ success: true, user });
+});
+
+app.post('/api/logout', (req, res) => {
+    req.session.destroy();
+    res.json({ success: true });
+});
+
+// Free Sign In
+app.post('/signin', (req, res) => {
+    const { email } = req.body;
+
+    if (!email || !email.trim()) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ error: 'Please enter a valid email' });
+    }
+
+    let user = findUserByEmail(email);
+
+    if (!user) {
+        // Create new free user
+        user = createUser({
+            email,
+            name: email.split('@')[0],
+            activeSubscription: false // Free user
+        });
+    }
+
+    req.session.user = user;
+    res.json({ success: true, user });
+});
+
+app.get('/api/me', (req, res) => {
+    if (req.session && req.session.user) {
+        res.json({ user: req.session.user });
+    } else {
+        res.json({ user: null });
+    }
+});
+
+// ============================================
+// STRIPE CHECKOUT
+// ============================================
+app.post('/create-checkout-session', async (req, res) => {
+    const { email, name } = req.body;
+
+    if (!email || !email.trim()) {
+        return res.status(400).json({ error: 'Email is required' });
+    }
+
+    if (!name || !name.trim()) {
+        return res.status(400).json({ error: 'Name is required' });
+    }
+
+    // Check if Stripe is configured
+    if (!stripe) {
+        // Demo mode - simulate successful subscription
+        let user = findUserByEmail(email);
+        if (!user) {
+            user = createUser({
+                email,
+                name,
+                activeSubscription: true,
+                stripeCustomerId: 'demo_' + Date.now()
+            });
+        } else {
+            user = updateUser(email, {
+                name,
+                activeSubscription: true
+            });
+        }
+
+        req.session.user = user;
+        return res.json({ url: '/success' });
+    }
+
+    try {
+        // Find or create user
+        let user = findUserByEmail(email);
+        let customerId;
+
+        if (user && user.stripeCustomerId) {
+            customerId = user.stripeCustomerId;
+        } else {
+            // Create Stripe customer
+            const customer = await stripe.customers.create({
+                email: email,
+                name: name
+            });
+            customerId = customer.id;
+
+            if (user) {
+                updateUser(email, { stripeCustomerId: customerId, name });
+            } else {
+                user = createUser({
+                    email,
+                    name,
+                    stripeCustomerId: customerId
+                });
+            }
+        }
+
+        // Create checkout session
+        const session = await stripe.checkout.sessions.create({
+            customer: customerId,
+            payment_method_types: ['card'],
+            line_items: [{
+                price: process.env.STRIPE_PRICE_ID,
+                quantity: 1
+            }],
+            mode: 'subscription',
+            success_url: `${req.protocol}://${req.get('host')}/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${req.protocol}://${req.get('host')}/subscribe.html`,
+            subscription_data: {
+                trial_period_days: 7
+            }
+        });
+
+        res.json({ url: session.url });
+    } catch (error) {
+        console.error('Stripe error:', error);
+        res.status(500).json({ error: error.message || 'Failed to create checkout session' });
+    }
+});
+
+// ============================================
+// STRIPE WEBHOOK
+// ============================================
+app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
+    if (!stripe) {
+        return res.status(200).json({ received: true });
+    }
+
+    const sig = req.headers['stripe-signature'];
+    let event;
+
+    try {
+        event = stripe.webhooks.constructEvent(
+            req.body,
+            sig,
+            process.env.STRIPE_WEBHOOK_SECRET
+        );
+    } catch (err) {
+        console.error('Webhook signature verification failed:', err.message);
+        return res.status(400).send(`Webhook Error: ${err.message}`);
+    }
+
+    // Handle events
+    switch (event.type) {
+        case 'checkout.session.completed': {
+            const session = event.data.object;
+            const customerId = session.customer;
+            const subscriptionId = session.subscription;
+
+            const user = findUserByCustomerId(customerId);
+            if (user) {
+                updateUser(user.email, {
+                    subscriptionId,
+                    activeSubscription: true
+                });
+                console.log(`✅ Subscription activated for ${user.email}`);
+            }
+            break;
+        }
+
+        case 'invoice.payment_succeeded': {
+            const invoice = event.data.object;
+            const customerId = invoice.customer;
+
+            const user = findUserByCustomerId(customerId);
+            if (user) {
+                updateUser(user.email, { activeSubscription: true });
+                console.log(`✅ Payment succeeded for ${user.email}`);
+            }
+            break;
+        }
+
+        case 'invoice.payment_failed': {
+            const invoice = event.data.object;
+            const customerId = invoice.customer;
+
+            const user = findUserByCustomerId(customerId);
+            if (user) {
+                updateUser(user.email, { activeSubscription: false });
+                console.log(`❌ Payment failed for ${user.email}`);
+            }
+            break;
+        }
+
+        case 'customer.subscription.deleted': {
+            const subscription = event.data.object;
+            const customerId = subscription.customer;
+
+            const user = findUserByCustomerId(customerId);
+            if (user) {
+                updateUser(user.email, {
+                    activeSubscription: false,
+                    subscriptionId: null
+                });
+                console.log(`🚫 Subscription canceled for ${user.email}`);
+            }
+            break;
+        }
+
+        default:
+            console.log(`Unhandled event type: ${event.type}`);
+    }
+
+    res.json({ received: true });
+});
 
 // ============================================
 // NOTES API
@@ -172,18 +497,15 @@ app.get('/api/weather', (req, res) => {
             return res.status(400).json({ error: 'City name is required' });
         }
 
-        // Check exact match first
         if (weatherData[city]) {
             return res.json(weatherData[city]);
         }
 
-        // Check partial match
         const matchedCity = Object.keys(weatherData).find(c => c.includes(city) || city.includes(c));
         if (matchedCity) {
             return res.json(weatherData[matchedCity]);
         }
 
-        // Generate random weather for unknown cities
         const randomWeather = ['Clear', 'Clouds', 'Rain', 'Mist'];
         const descriptions = ['Pleasant weather', 'Mild conditions', 'Typical weather', 'Seasonal conditions'];
 
@@ -238,7 +560,7 @@ app.delete('/api/files/:id', (req, res) => {
 });
 
 // ============================================
-// CHAT API (Simple Echo with Victorian flair)
+// CHAT API
 // ============================================
 const chatResponses = [
     "Indeed, that is a most intriguing thought!",
@@ -268,18 +590,22 @@ app.post('/api/chat', (req, res) => {
 // ============================================
 app.listen(PORT, () => {
     console.log(`
-╔═══════════════════════════════════════════════════════════╗
-║                                                           ║
-║     ✦  THE GILDED DESK  ✦                                ║
-║                                                           ║
-║     Your Elegant Productivity Suite                       ║
-║                                                           ║
-║     Server running at: http://localhost:${PORT}              ║
-║                                                           ║
-║     Features:                                             ║
-║       • Notes      • To-Do List    • Calculator          ║
-║       • Weather    • Chat          • File Cabinet        ║
-║                                                           ║
-╚═══════════════════════════════════════════════════════════╝
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║     ✨  THE GILDED DESK  ✨                                    ║
+║     Your Elegant Productivity Suite                            ║
+║                                                                ║
+║     🌐 Server: http://localhost:${PORT}                           ║
+║                                                                ║
+║     📄 Pages:                                                  ║
+║        /           → Landing page                              ║
+║        /signin     → Free sign in                              ║
+║        /subscribe  → Subscription form                         ║
+║        /success    → Payment success                           ║
+║        /app        → Main app (free or subscribers)            ║
+║                                                                ║
+║     💳 Stripe: ${stripe ? 'Configured ✓' : 'Demo Mode (no API key)'}                       ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
     `);
 });

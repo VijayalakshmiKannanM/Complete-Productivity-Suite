@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subscribe - The Gilded Desk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="auth-branding-content">
+                <div class="logo-large">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <h1>The Gilded Desk</h1>
+                <p>Your elegant productivity suite awaits</p>
+
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>6 Powerful Tools</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>7-Day Free Trial</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Cancel Anytime</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Secure Payments</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form-section">
+            <div class="auth-form-container">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+
+                <div class="auth-header">
+                    <h2>Start Your Free Trial</h2>
+                    <p>Enter your email to get started. No credit card required for trial.</p>
+                </div>
+
+                <form id="subscribeForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="name">
+                            <i class="fas fa-user"></i> Full Name
+                        </label>
+                        <input
+                            type="text"
+                            id="name"
+                            name="name"
+                            placeholder="John Doe"
+                            required
+                            autocomplete="name"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-full" id="submitBtn">
+                        <i class="fas fa-lock"></i> Continue to Payment
+                    </button>
+
+                    <div id="errorMessage" class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span></span>
+                    </div>
+
+                    <div id="loadingMessage" class="loading-message">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Redirecting to secure checkout...</span>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <div class="secure-badge">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Secured by Stripe</span>
+                    </div>
+                    <p class="terms">
+                        By subscribing, you agree to our
+                        <a href="#">Terms of Service</a> and
+                        <a href="#">Privacy Policy</a>
+                    </p>
+                </div>
+
+                <div class="pricing-reminder">
+                    <div class="pricing-box">
+                        <span class="plan-name">Pro Plan</span>
+                        <span class="plan-price">$9/month</span>
+                        <span class="plan-trial">after 7-day free trial</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('subscribeForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+            const name = document.getElementById('name').value.trim();
+
+            // Validation
+            if (!email) {
+                showError('Please enter your email address');
+                return;
+            }
+
+            if (!name) {
+                showError('Please enter your name');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+
+            // Show loading state
+            hideError();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+            loadingMessage.style.display = 'flex';
+
+            try {
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, name })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (data.url) {
+                    window.location.href = data.url;
+                }
+            } catch (error) {
+                showError(error.message || 'Something went wrong. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-lock"></i> Continue to Payment';
+                loadingMessage.style.display = 'none';
+            }
+        });
+
+        function showError(message) {
+            errorMessage.querySelector('span').textContent = message;
+            errorMessage.style.display = 'flex';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+    </script>
+</body>
+</html>

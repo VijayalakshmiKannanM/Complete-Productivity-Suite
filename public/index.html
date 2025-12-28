@@ -3,211 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>The Gilded Desk</title>
+    <title>The Gilded Desk - Your Elegant Productivity Suite</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <link rel="stylesheet" href="style.css">
 </head>
-<body>
-    <div class="app-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
-            <div class="sidebar-header">
-                <h1><i class="fas fa-feather-alt"></i></h1>
-                <span class="brand-name">The Gilded Desk</span>
+<body class="landing-page">
+    <!-- Navigation -->
+    <nav class="landing-nav">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-feather-alt"></i>
+                <span>The Gilded Desk</span>
             </div>
-            <ul class="nav-menu">
-                <li class="nav-item active" data-section="notes">
-                    <i class="fas fa-scroll"></i>
-                    <span>Notes</span>
-                </li>
-                <li class="nav-item" data-section="todos">
-                    <i class="fas fa-tasks"></i>
-                    <span>To-Do List</span>
-                </li>
-                <li class="nav-item" data-section="calculator">
-                    <i class="fas fa-calculator"></i>
-                    <span>Calculator</span>
-                </li>
-                <li class="nav-item" data-section="weather">
-                    <i class="fas fa-cloud-sun"></i>
-                    <span>Weather</span>
-                </li>
-                <li class="nav-item" data-section="chat">
-                    <i class="fas fa-comments"></i>
-                    <span>Chat</span>
-                </li>
-                <li class="nav-item" data-section="files">
-                    <i class="fas fa-folder-open"></i>
-                    <span>Files</span>
-                </li>
-            </ul>
-            <div class="sidebar-footer">
-                <p><i class="fas fa-book-open"></i> Est. 2025</p>
+            <div class="nav-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="/signin.html" class="nav-signin">Sign In</a>
+                <a href="/subscribe.html" class="btn-nav">Get Started</a>
             </div>
-        </nav>
+        </div>
+    </nav>
 
-        <!-- Main Content -->
-        <main class="main-content">
-            <!-- Notes Section -->
-            <section id="notes" class="content-section active">
-                <div class="section-header">
-                    <h2><i class="fas fa-scroll"></i> Notes</h2>
-                    <p class="section-subtitle">Capture your thoughts elegantly</p>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-quill"></i> Compose New Note</h3>
-                    <form id="noteForm">
-                        <div class="form-group">
-                            <label for="noteTitle"><i class="fas fa-heading"></i> Title</label>
-                            <input type="text" id="noteTitle" placeholder="Give your note a title..." required>
-                        </div>
-                        <div class="form-group">
-                            <label for="noteContent"><i class="fas fa-pen-nib"></i> Content</label>
-                            <textarea id="noteContent" placeholder="Write your thoughts here..." rows="4" required></textarea>
-                        </div>
-                        <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i> Add Note</button>
-                    </form>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-book"></i> Your Notes</h3>
-                    <div id="notesContainer" class="items-container"></div>
-                </div>
-            </section>
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Your Complete <span class="gradient-text">Productivity Suite</span></h1>
+            <p class="hero-subtitle">Notes, Tasks, Calculator, Weather, Chat & Files - all in one elegant workspace. Boost your productivity with style.</p>
+            <div class="hero-buttons">
+                <a href="/subscribe.html" class="btn-primary btn-large">
+                    <i class="fas fa-rocket"></i> Start Free Trial
+                </a>
+                <a href="#features" class="btn-secondary btn-large">
+                    <i class="fas fa-play-circle"></i> See Features
+                </a>
+            </div>
+            <p class="hero-note"><i class="fas fa-check-circle"></i> 7-day free trial <i class="fas fa-check-circle"></i> Cancel anytime</p>
+        </div>
+        <div class="hero-visual">
+            <div class="floating-card card-1">
+                <i class="fas fa-scroll"></i>
+                <span>Notes</span>
+            </div>
+            <div class="floating-card card-2">
+                <i class="fas fa-tasks"></i>
+                <span>Tasks</span>
+            </div>
+            <div class="floating-card card-3">
+                <i class="fas fa-calculator"></i>
+                <span>Calculator</span>
+            </div>
+            <div class="floating-card card-4">
+                <i class="fas fa-cloud-sun"></i>
+                <span>Weather</span>
+            </div>
+            <div class="floating-card card-5">
+                <i class="fas fa-comments"></i>
+                <span>Chat</span>
+            </div>
+            <div class="floating-card card-6">
+                <i class="fas fa-folder-open"></i>
+                <span>Files</span>
+            </div>
+        </div>
+    </section>
 
-            <!-- To-Do List Section -->
-            <section id="todos" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-tasks"></i> To-Do List</h2>
-                    <p class="section-subtitle">Organize your tasks with grace</p>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-plus"></i> Add New Task</h3>
-                    <form id="todoForm">
-                        <div class="form-row">
-                            <input type="text" id="todoInput" placeholder="What needs to be done?" required>
-                            <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Add</button>
-                        </div>
-                    </form>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-list-check"></i> Your Tasks</h3>
-                    <div class="todo-filters">
-                        <button class="filter-btn active" data-filter="all">All</button>
-                        <button class="filter-btn" data-filter="active">Active</button>
-                        <button class="filter-btn" data-filter="completed">Completed</button>
-                    </div>
-                    <div id="todosContainer" class="items-container"></div>
-                    <div class="todo-stats">
-                        <span id="todoCount">0 tasks remaining</span>
-                        <button id="clearCompleted" class="btn-secondary"><i class="fas fa-trash"></i> Clear Completed</button>
-                    </div>
-                </div>
-            </section>
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <div class="section-container">
+            <h2 class="section-title">Everything You Need</h2>
+            <p class="section-subtitle">Six powerful tools in one beautiful interface</p>
 
-            <!-- Calculator Section -->
-            <section id="calculator" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-calculator"></i> Calculator</h2>
-                    <p class="section-subtitle">Compute with Victorian precision</p>
-                </div>
-                <div class="card calculator-card">
-                    <div class="calc-display">
-                        <div class="calc-history" id="calcHistory"></div>
-                        <div class="calc-current" id="calcDisplay">0</div>
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #6366f1;">
+                        <i class="fas fa-scroll"></i>
                     </div>
-                    <div class="calc-buttons">
-                        <button class="calc-btn func" data-action="clear">C</button>
-                        <button class="calc-btn func" data-action="backspace"><i class="fas fa-delete-left"></i></button>
-                        <button class="calc-btn func" data-action="percent">%</button>
-                        <button class="calc-btn operator" data-action="/">÷</button>
-                        <button class="calc-btn number" data-action="7">7</button>
-                        <button class="calc-btn number" data-action="8">8</button>
-                        <button class="calc-btn number" data-action="9">9</button>
-                        <button class="calc-btn operator" data-action="*">×</button>
-                        <button class="calc-btn number" data-action="4">4</button>
-                        <button class="calc-btn number" data-action="5">5</button>
-                        <button class="calc-btn number" data-action="6">6</button>
-                        <button class="calc-btn operator" data-action="-">−</button>
-                        <button class="calc-btn number" data-action="1">1</button>
-                        <button class="calc-btn number" data-action="2">2</button>
-                        <button class="calc-btn number" data-action="3">3</button>
-                        <button class="calc-btn operator" data-action="+">+</button>
-                        <button class="calc-btn number zero" data-action="0">0</button>
-                        <button class="calc-btn number" data-action=".">.</button>
-                        <button class="calc-btn equals" data-action="=">=</button>
-                    </div>
+                    <h3>Smart Notes</h3>
+                    <p>Capture your thoughts elegantly. Create, organize, and search notes with ease.</p>
                 </div>
-            </section>
 
-            <!-- Weather Section -->
-            <section id="weather" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-cloud-sun"></i> Weather</h2>
-                    <p class="section-subtitle">Nature's forecast at your fingertips</p>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #8b5cf6;">
+                        <i class="fas fa-tasks"></i>
+                    </div>
+                    <h3>To-Do Lists</h3>
+                    <p>Stay organized with powerful task management. Filter, complete, and track progress.</p>
                 </div>
-                <div class="card">
-                    <h3><i class="fas fa-search-location"></i> Search Location</h3>
-                    <form id="weatherForm">
-                        <div class="form-row">
-                            <input type="text" id="cityInput" placeholder="Enter city name..." required>
-                            <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Search</button>
-                        </div>
-                    </form>
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #ec4899;">
+                        <i class="fas fa-calculator"></i>
+                    </div>
+                    <h3>Calculator</h3>
+                    <p>Quick calculations at your fingertips. Full keyboard support included.</p>
                 </div>
-                <div class="card weather-display" id="weatherDisplay">
-                    <div class="weather-placeholder">
+
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #14b8a6;">
                         <i class="fas fa-cloud-sun"></i>
-                        <p>Enter a city to view weather</p>
                     </div>
+                    <h3>Weather</h3>
+                    <p>Check weather for any city worldwide. Always know before you go.</p>
                 </div>
-            </section>
 
-            <!-- Chat Section -->
-            <section id="chat" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-comments"></i> Chat</h2>
-                    <p class="section-subtitle">Converse with our scholarly assistant</p>
-                </div>
-                <div class="card chat-card">
-                    <div class="chat-messages" id="chatMessages">
-                        <div class="chat-message bot">
-                            <div class="message-avatar"><i class="fas fa-robot"></i></div>
-                            <div class="message-content">
-                                <p>Greetings! I am your scholarly assistant. How may I help you today?</p>
-                            </div>
-                        </div>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #f59e0b;">
+                        <i class="fas fa-comments"></i>
                     </div>
-                    <form id="chatForm" class="chat-input-form">
-                        <input type="text" id="chatInput" placeholder="Type your message..." required>
-                        <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
-                    </form>
+                    <h3>AI Chat</h3>
+                    <p>Converse with our friendly assistant. Get help whenever you need it.</p>
                 </div>
-            </section>
 
-            <!-- Files Section -->
-            <section id="files" class="content-section">
-                <div class="section-header">
-                    <h2><i class="fas fa-folder-open"></i> File Cabinet</h2>
-                    <p class="section-subtitle">Store your documents with care</p>
-                </div>
-                <div class="card">
-                    <h3><i class="fas fa-cloud-upload-alt"></i> Upload Files</h3>
-                    <div class="file-upload-area" id="dropZone">
-                        <i class="fas fa-cloud-upload-alt"></i>
-                        <p>Drag & drop files here or click to browse</p>
-                        <input type="file" id="fileInput" multiple hidden>
-                        <button type="button" class="btn-secondary" id="browseBtn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                <div class="feature-card">
+                    <div class="feature-icon" style="--accent: #06b6d4;">
+                        <i class="fas fa-folder-open"></i>
                     </div>
-                    <div class="upload-progress" id="uploadProgress"></div>
+                    <h3>File Cabinet</h3>
+                    <p>Drag & drop file uploads. Keep your documents organized and accessible.</p>
                 </div>
-                <div class="card">
-                    <h3><i class="fas fa-archive"></i> Your Files</h3>
-                    <div id="filesContainer" class="items-container files-grid"></div>
-                </div>
-            </section>
-        </main>
-    </div>
+            </div>
+        </div>
+    </section>
 
-    <script src="app.js"></script>
+    <!-- Pricing Section -->
+    <section id="pricing" class="pricing">
+        <div class="section-container">
+            <h2 class="section-title">Simple Pricing</h2>
+            <p class="section-subtitle">One plan, everything included</p>
+
+            <div class="pricing-card">
+                <div class="pricing-badge">Most Popular</div>
+                <h3>Pro Plan</h3>
+                <div class="pricing-amount">
+                    <span class="currency">$</span>
+                    <span class="price">9</span>
+                    <span class="period">/month</span>
+                </div>
+                <ul class="pricing-features">
+                    <li><i class="fas fa-check"></i> Unlimited Notes</li>
+                    <li><i class="fas fa-check"></i> Unlimited Tasks</li>
+                    <li><i class="fas fa-check"></i> Calculator & Weather</li>
+                    <li><i class="fas fa-check"></i> AI Chat Assistant</li>
+                    <li><i class="fas fa-check"></i> File Uploads (100MB)</li>
+                    <li><i class="fas fa-check"></i> Priority Support</li>
+                    <li><i class="fas fa-check"></i> 7-Day Free Trial</li>
+                </ul>
+                <a href="/subscribe.html" class="btn-primary btn-full">
+                    <i class="fas fa-crown"></i> Start Free Trial
+                </a>
+                <p class="pricing-note">Cancel anytime. No questions asked.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <div class="section-container">
+            <h2>Ready to Boost Your Productivity?</h2>
+            <p>Join thousands of users who organize their life with The Gilded Desk</p>
+            <a href="/subscribe.html" class="btn-primary btn-large">
+                <i class="fas fa-rocket"></i> Get Started Now
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="landing-footer">
+        <div class="footer-container">
+            <div class="footer-brand">
+                <div class="logo">
+                    <i class="fas fa-feather-alt"></i>
+                    <span>The Gilded Desk</span>
+                </div>
+                <p>Your elegant productivity companion</p>
+            </div>
+            <div class="footer-links">
+                <a href="#features">Features</a>
+                <a href="#pricing">Pricing</a>
+                <a href="/subscribe.html">Subscribe</a>
+            </div>
+            <div class="footer-copyright">
+                <p>&copy; 2025 The Gilded Desk. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
 </body>
 </html>

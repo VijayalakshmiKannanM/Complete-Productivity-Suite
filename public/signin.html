@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - The Gilded Desk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <!-- Left Side - Branding -->
+        <div class="auth-branding">
+            <div class="auth-branding-content">
+                <div class="logo-large">
+                    <i class="fas fa-feather-alt"></i>
+                </div>
+                <h1>The Gilded Desk</h1>
+                <p>Welcome back to your productivity suite</p>
+
+                <div class="auth-features">
+                    <div class="auth-feature">
+                        <i class="fas fa-scroll"></i>
+                        <span>Smart Notes</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-tasks"></i>
+                        <span>To-Do Lists</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-calculator"></i>
+                        <span>Calculator</span>
+                    </div>
+                    <div class="auth-feature">
+                        <i class="fas fa-cloud-sun"></i>
+                        <span>Weather</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Side - Form -->
+        <div class="auth-form-section">
+            <div class="auth-form-container">
+                <a href="/" class="back-link">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </a>
+
+                <div class="auth-header">
+                    <h2>Sign In</h2>
+                    <p>Enter your email to access your workspace</p>
+                </div>
+
+                <form id="signinForm" class="auth-form">
+                    <div class="form-group">
+                        <label for="email">
+                            <i class="fas fa-envelope"></i> Email Address
+                        </label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            placeholder="you@example.com"
+                            required
+                            autocomplete="email"
+                        >
+                    </div>
+
+                    <button type="submit" class="btn-primary btn-full" id="submitBtn">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+
+                    <div id="errorMessage" class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span></span>
+                    </div>
+
+                    <div id="loadingMessage" class="loading-message">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <span>Signing you in...</span>
+                    </div>
+                </form>
+
+                <div class="auth-footer">
+                    <div class="auth-divider">
+                        <span>or</span>
+                    </div>
+                    <p class="signup-link">
+                        Don't have an account?
+                        <a href="/subscribe.html">Start Free Trial</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const form = document.getElementById('signinForm');
+        const submitBtn = document.getElementById('submitBtn');
+        const errorMessage = document.getElementById('errorMessage');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value.trim();
+
+            // Validation
+            if (!email) {
+                showError('Please enter your email address');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showError('Please enter a valid email address');
+                return;
+            }
+
+            // Show loading state
+            hideError();
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            loadingMessage.style.display = 'flex';
+
+            try {
+                const response = await fetch('/signin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                if (data.success) {
+                    window.location.href = '/app';
+                }
+            } catch (error) {
+                showError(error.message || 'Something went wrong. Please try again.');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+                loadingMessage.style.display = 'none';
+            }
+        });
+
+        function showError(message) {
+            errorMessage.querySelector('span').textContent = message;
+            errorMessage.style.display = 'flex';
+        }
+
+        function hideError() {
+            errorMessage.style.display = 'none';
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Gilded Desk</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1><i class="fas fa-feather-alt"></i></h1>
+                <span class="brand-name">The Gilded Desk</span>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="notes">
+                    <i class="fas fa-scroll"></i>
+                    <span>Notes</span>
+                </li>
+                <li class="nav-item" data-section="todos">
+                    <i class="fas fa-tasks"></i>
+                    <span>To-Do List</span>
+                </li>
+                <li class="nav-item" data-section="calculator">
+                    <i class="fas fa-calculator"></i>
+                    <span>Calculator</span>
+                </li>
+                <li class="nav-item" data-section="weather">
+                    <i class="fas fa-cloud-sun"></i>
+                    <span>Weather</span>
+                </li>
+                <li class="nav-item" data-section="chat">
+                    <i class="fas fa-comments"></i>
+                    <span>Chat</span>
+                </li>
+                <li class="nav-item" data-section="files">
+                    <i class="fas fa-folder-open"></i>
+                    <span>Files</span>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <p><i class="fas fa-book-open"></i> Est. 2025</p>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Notes Section -->
+            <section id="notes" class="content-section active">
+                <div class="section-header">
+                    <h2><i class="fas fa-scroll"></i> Notes</h2>
+                    <p class="section-subtitle">Capture your thoughts elegantly</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-quill"></i> Compose New Note</h3>
+                    <form id="noteForm">
+                        <div class="form-group">
+                            <label for="noteTitle"><i class="fas fa-heading"></i> Title</label>
+                            <input type="text" id="noteTitle" placeholder="Give your note a title..." required>
+                        </div>
+                        <div class="form-group">
+                            <label for="noteContent"><i class="fas fa-pen-nib"></i> Content</label>
+                            <textarea id="noteContent" placeholder="Write your thoughts here..." rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-primary"><i class="fas fa-plus-circle"></i> Add Note</button>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-book"></i> Your Notes</h3>
+                    <div id="notesContainer" class="items-container"></div>
+                </div>
+            </section>
+
+            <!-- To-Do List Section -->
+            <section id="todos" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-tasks"></i> To-Do List</h2>
+                    <p class="section-subtitle">Organize your tasks with grace</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-plus"></i> Add New Task</h3>
+                    <form id="todoForm">
+                        <div class="form-row">
+                            <input type="text" id="todoInput" placeholder="What needs to be done?" required>
+                            <button type="submit" class="btn-primary"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-list-check"></i> Your Tasks</h3>
+                    <div class="todo-filters">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="active">Active</button>
+                        <button class="filter-btn" data-filter="completed">Completed</button>
+                    </div>
+                    <div id="todosContainer" class="items-container"></div>
+                    <div class="todo-stats">
+                        <span id="todoCount">0 tasks remaining</span>
+                        <button id="clearCompleted" class="btn-secondary"><i class="fas fa-trash"></i> Clear Completed</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Calculator Section -->
+            <section id="calculator" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-calculator"></i> Calculator</h2>
+                    <p class="section-subtitle">Compute with Victorian precision</p>
+                </div>
+                <div class="card calculator-card">
+                    <div class="calc-display">
+                        <div class="calc-history" id="calcHistory"></div>
+                        <div class="calc-current" id="calcDisplay">0</div>
+                    </div>
+                    <div class="calc-buttons">
+                        <button class="calc-btn func" data-action="clear">C</button>
+                        <button class="calc-btn func" data-action="backspace"><i class="fas fa-delete-left"></i></button>
+                        <button class="calc-btn func" data-action="percent">%</button>
+                        <button class="calc-btn operator" data-action="/">÷</button>
+                        <button class="calc-btn number" data-action="7">7</button>
+                        <button class="calc-btn number" data-action="8">8</button>
+                        <button class="calc-btn number" data-action="9">9</button>
+                        <button class="calc-btn operator" data-action="*">×</button>
+                        <button class="calc-btn number" data-action="4">4</button>
+                        <button class="calc-btn number" data-action="5">5</button>
+                        <button class="calc-btn number" data-action="6">6</button>
+                        <button class="calc-btn operator" data-action="-">−</button>
+                        <button class="calc-btn number" data-action="1">1</button>
+                        <button class="calc-btn number" data-action="2">2</button>
+                        <button class="calc-btn number" data-action="3">3</button>
+                        <button class="calc-btn operator" data-action="+">+</button>
+                        <button class="calc-btn number zero" data-action="0">0</button>
+                        <button class="calc-btn number" data-action=".">.</button>
+                        <button class="calc-btn equals" data-action="=">=</button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Weather Section -->
+            <section id="weather" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-cloud-sun"></i> Weather</h2>
+                    <p class="section-subtitle">Nature's forecast at your fingertips</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-search-location"></i> Search Location</h3>
+                    <form id="weatherForm">
+                        <div class="form-row">
+                            <input type="text" id="cityInput" placeholder="Enter city name..." required>
+                            <button type="submit" class="btn-primary"><i class="fas fa-search"></i> Search</button>
+                        </div>
+                    </form>
+                </div>
+                <div class="card weather-display" id="weatherDisplay">
+                    <div class="weather-placeholder">
+                        <i class="fas fa-cloud-sun"></i>
+                        <p>Enter a city to view weather</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Chat Section -->
+            <section id="chat" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-comments"></i> Chat</h2>
+                    <p class="section-subtitle">Converse with our scholarly assistant</p>
+                </div>
+                <div class="card chat-card">
+                    <div class="chat-messages" id="chatMessages">
+                        <div class="chat-message bot">
+                            <div class="message-avatar"><i class="fas fa-robot"></i></div>
+                            <div class="message-content">
+                                <p>Greetings! I am your scholarly assistant. How may I help you today?</p>
+                            </div>
+                        </div>
+                    </div>
+                    <form id="chatForm" class="chat-input-form">
+                        <input type="text" id="chatInput" placeholder="Type your message..." required>
+                        <button type="submit" class="btn-primary"><i class="fas fa-paper-plane"></i></button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Files Section -->
+            <section id="files" class="content-section">
+                <div class="section-header">
+                    <h2><i class="fas fa-folder-open"></i> File Cabinet</h2>
+                    <p class="section-subtitle">Store your documents with care</p>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-cloud-upload-alt"></i> Upload Files</h3>
+                    <div class="file-upload-area" id="dropZone">
+                        <i class="fas fa-cloud-upload-alt"></i>
+                        <p>Drag & drop files here or click to browse</p>
+                        <input type="file" id="fileInput" multiple hidden>
+                        <button type="button" class="btn-secondary" id="browseBtn"><i class="fas fa-folder-open"></i> Browse Files</button>
+                    </div>
+                    <div class="upload-progress" id="uploadProgress"></div>
+                </div>
+                <div class="card">
+                    <h3><i class="fas fa-archive"></i> Your Files</h3>
+                    <div id="filesContainer" class="items-container files-grid"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
