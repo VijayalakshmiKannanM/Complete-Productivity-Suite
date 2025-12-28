@@ -1,46 +1,46 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700&display=swap');
 
 /* ============================================
-   LIGHT GREEN & BLUE COLOR SCHEME
+   EYE-FRIENDLY SOFT COLOR SCHEME
    ============================================ */
 :root {
-    /* Primary Gradients */
-    --gradient-primary: linear-gradient(135deg, #06b6d4 0%, #10b981 100%);
-    --gradient-secondary: linear-gradient(135deg, #22d3ee 0%, #34d399 100%);
-    --gradient-hero: linear-gradient(135deg, #ecfdf5 0%, #f0fdfa 50%, #e0f2fe 100%);
-    --gradient-card: linear-gradient(135deg, #06b6d4 0%, #14b8a6 50%, #10b981 100%);
+    /* Primary Gradients - Soft & Gentle */
+    --gradient-primary: linear-gradient(135deg, #5b8def 0%, #7c3aed 100%);
+    --gradient-secondary: linear-gradient(135deg, #a78bfa 0%, #818cf8 100%);
+    --gradient-hero: linear-gradient(135deg, #fafafa 0%, #f5f5f5 50%, #fafbfc 100%);
+    --gradient-card: linear-gradient(135deg, #5b8def 0%, #6366f1 50%, #7c3aed 100%);
 
-    /* Solid Colors - Light Blue & Light Green */
-    --primary: #06b6d4;
-    --primary-dark: #0891b2;
-    --secondary: #10b981;
-    --accent: #14b8a6;
-    --accent-primary: #06b6d4;
-    --success: #10b981;
-    --warning: #f59e0b;
+    /* Solid Colors - Soft & Easy on Eyes */
+    --primary: #5b8def;
+    --primary-dark: #4a7dde;
+    --secondary: #7c3aed;
+    --accent: #6366f1;
+    --accent-primary: #5b8def;
+    --success: #22c55e;
+    --warning: #eab308;
     --error: #ef4444;
 
-    /* Light Theme */
-    --bg-dark: #f0fdfa;
+    /* Light Theme - Warm White */
+    --bg-dark: #fafafa;
     --bg-card: #ffffff;
-    --bg-card-hover: #ecfdf5;
-    --bg-input: #f0fdfa;
+    --bg-card-hover: #f8f9fa;
+    --bg-input: #f5f5f5;
 
-    /* Text Colors - Bright & Vibrant */
-    --text-primary: #0891b2;
-    --text-secondary: #0d9488;
-    --text-muted: #14b8a6;
+    /* Text Colors - Comfortable for Reading */
+    --text-primary: #374151;
+    --text-secondary: #6b7280;
+    --text-muted: #9ca3af;
 
-    /* Borders & Shadows */
-    --border-color: #99f6e4;
-    --shadow-sm: 0 1px 3px rgba(6, 182, 212, 0.1);
-    --shadow-md: 0 4px 12px rgba(6, 182, 212, 0.15);
-    --shadow-lg: 0 10px 30px rgba(6, 182, 212, 0.2);
-    --shadow-glow: 0 0 30px rgba(16, 185, 129, 0.25);
+    /* Borders & Shadows - Subtle */
+    --border-color: #e5e7eb;
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+    --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+    --shadow-glow: 0 0 20px rgba(91, 141, 239, 0.15);
 
     /* App Sidebar Colors */
-    --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
-    --sidebar-active: rgba(6, 182, 212, 0.15);
+    --sidebar-bg: linear-gradient(180deg, #ffffff 0%, #fafafa 100%);
+    --sidebar-active: rgba(91, 141, 239, 0.1);
 }
 
 /* ============================================
@@ -540,7 +540,7 @@ a {
 
 .auth-branding {
     flex: 1;
-    background: linear-gradient(135deg, #e0f2fe 0%, #ccfbf1 100%);
+    background: linear-gradient(135deg, #eff6ff 0%, #f5f3ff 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -556,7 +556,7 @@ a {
 
 .auth-branding-content {
     text-align: center;
-    color: #0891b2;
+    color: #374151;
 }
 
 .logo-large {
